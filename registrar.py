@@ -23,6 +23,8 @@ def on_connect(client, userdata, flags, rc):
 
 
 def on_message(client, userdata, msg):
+    if msg.retain :
+        return
     # print(msg.topic+" %s"%str(msg.payload))
     jsonobj=json.loads(msg.payload) #.replace("'",'"')
     if 'res' in jsonobj:
@@ -34,8 +36,10 @@ def on_message(client, userdata, msg):
     ext=jsonobj['ext']
     s=jsonobj['img']
     # print('len of base64 str:%s'%len(s))
-    # print('bytes : %s'%bytes(s[2:-1],'utf-8'))
-    img_based64_bytes=base64.b64decode(bytes(s[2:-1],'utf-8'))
+    if len(s)%4:
+        s += '='*(4-len(s)%4)
+    img_based64_bytes=base64.urlsafe_b64decode(bytes(s,'utf-8')) #.decode('base64')
+
     img_person_path=None
     fname = datetime.now().strftime('%f%S%M%H%d%m%Y')
     if key is None or len(key.strip()) == 0:

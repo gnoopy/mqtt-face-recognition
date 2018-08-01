@@ -33,11 +33,10 @@ def on_message(client, userdata, msg):
 
 def get_b64str_from_file(fpath):
     with open(fpath, 'rb') as imfile:
-        # s=unicode(base64.b64encode(imfile.read()))
-        s=str(base64.b64encode(imfile.read()))
+        s=str(base64.urlsafe_b64encode(imfile.read()))
 
         # print ("str:%s, type:%s"%(s,type(s)))
-    return s
+    return s[2:-1]
 
 
 def validate_imgpath(path):
