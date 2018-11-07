@@ -10,7 +10,7 @@ import face_recognition
 # integrate from examples/recognize_faces_in_pictures.py
 
 TOPIC='facerecog'
-BIOHOME='/home/bio/biorecog'
+BIOHOME='/home/alphago'
 KNOWN=BIOHOME+'/known'
 UNKNOWN=BIOHOME+'/unknown'
 KNOWN_KEYS=[]
@@ -35,7 +35,7 @@ def on_message(client, userdata, msg):
     key=jsonobj['name']
     ext=jsonobj['ext']
     s=jsonobj['img']
-    # print('len of base64 str:%s'%len(s))
+#    print('ext:%s'%ext)
     if len(s)%4:
         s += '='*(4-len(s)%4)
     img_based64_bytes=base64.urlsafe_b64decode(bytes(s,'utf-8')) #.decode('base64')
@@ -71,19 +71,21 @@ def mkdir_if_newkey(k):
     return d
 
 def load_known_face_imgs():
-    print('Loading face images',end='')
+    print('Start loading face images')
+    #print('Loading face images',end='')
     known_folders=glob.glob(KNOWN+'/*/')
     for folder in known_folders:
         known_key=folder.replace(KNOWN,'').replace('/','')
         flist=glob.glob(folder+'/*.[jp][pn]g')
         if len(flist) > 0:
             known_file=flist[-1] #last picture could be recent picture
+            print('last file:%s'%known_file)
             a_img=face_recognition.load_image_file(known_file)
             a_face_encoding = face_recognition.face_encodings(a_img)[0]
             KNOWN_KEYS.append(known_key)
             KNOWN_FACES.append(a_face_encoding)
-        print('.',end='')
-    print(' finished!')
+#        print('.',end='')
+    print('End loading face images')
 
 def recognize(unknown_file):
     unknown_image = face_recognition.load_image_file(unknown_file)
